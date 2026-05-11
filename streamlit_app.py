@@ -5,7 +5,10 @@ import requests
 import streamlit as st
 
 
-API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+API_BASE_URL = os.getenv(
+    "API_BASE_URL",
+    "https://assessment-recommender-nzl3.onrender.com"
+).rstrip("/")
 REQUEST_TIMEOUT_SECONDS = 30
 
 
