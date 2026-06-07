@@ -1,127 +1,141 @@
 # SHL Assessment Recommendation Assistant
 
-A production-ready conversational AI assistant for SHL assessment recommendations using FastAPI (backend) + Streamlit (frontend) + RAG + Groq.
+![SHL Recommendation Assistant](Images/Screenshot 2026-06-07 184359.png)
 
-## Key Features
+A modern AI-powered recommendation assistant that helps HR and talent teams find the right SHL assessment using conversational inputs, semantic search, and smart prompt orchestration.
 
-- **Dual-layer architecture**: FastAPI backend API + Streamlit web UI
-- **Stateless conversation API** (`POST /chat`) with full message history tracking
-- **SHL-only domain guardrails** with out-of-scope refusal
-- **Smart clarification-first behavior** when role/seniority/focus information is missing
-- **Vector-based retrieval** over SHL catalog embeddings (ChromaDB + Hugging Face)
-- **Rich response schema** with recommendation details (duration, skills, test type, etc.)
-- **Production-ready deployment** on Render with health checks
-- **Ingestion pipeline** for catalog updates and data refresh
+---
 
-## Project Structure
+## 🌟 Live Demo
 
-```
+Visit the deployed app:
+
+https://dhruv0126-assessment-recommender-dhruv0126.streamlit.app/
+
+---
+
+## 🚀 What this project does
+
+This app turns natural conversation into SHL assessment recommendations by combining:
+
+- **FastAPI backend** for a stateless chat API
+- **Streamlit frontend** for an intuitive recommendation UI
+- **Retrieval-Augmented Generation (RAG)** over SHL assessment content
+- **ChromaDB vector search** for fast similarity-based retrieval
+- **Hugging Face embeddings** + **Groq LLM** inference
+- **Domain guardrails** for SHL-only responses and safety
+
+---
+
+## 📌 Key Features
+
+- **Conversational recommendation flow** with history-aware responses
+- **Clarification-first behavior** for missing role, seniority, or focus
+- **Structured recommendation output** including duration, skills, test type, and category
+- **Searchable SHL catalog** via vector embeddings and metadata
+- **Production-ready deployment support** with health checks
+- **Data refresh pipeline** for catalog updates and ingestion
+
+---
+
+## 🧩 Project Structure
+
+```text
 SHL_RECOMMENDATION_APP/
-├── app/                              # FastAPI backend service
-│   ├── main.py                       # FastAPI app definition & endpoints
+├── app/
+│   ├── main.py
 │   ├── models/
-│   │   └── schemas.py                # Pydantic request/response models
+│   │   └── schemas.py
 │   ├── prompts/
-│   │   └── system_prompt.py          # LLM system prompt
+│   │   └── system_prompt.py
 │   ├── services/
-│   │   ├── agent.py                  # SHL agent orchestration logic
-│   │   ├── catalog_store.py          # ChromaDB vector store interface
-│   │   └── retriever.py              # RAG retrieval pipeline
+│   │   ├── agent.py
+│   │   ├── catalog_store.py
+│   │   └── retriever.py
 │   └── utils/
-│       └── text.py                   # Text utilities
+│       └── text.py
 ├── data/
-│   ├── shl_catalog.json              # SHL assessment catalog
-│   └── chroma_db/                    # Vector database (ChromaDB)
+│   ├── shl_catalog.json
+│   └── chroma_db/
 ├── scripts/
-│   ├── ingest.py                     # Build/update vector database
-│   └── scraper.py                    # Fetch SHL catalog data
-├── streamlit_app.py                  # Streamlit web UI
-├── requirements.txt                  # Python dependencies
-├── .env.example                      # Environment variables template
+│   ├── ingest.py
+│   └── scraper.py
+├── streamlit_app.py
+├── requirements.txt
+├── .env.example
 └── README.md
 ```
 
-## Quick Start
+---
 
-### 1. Environment Setup
+## 🧠 How it works
 
-```bash
-# Create virtual environment
+1. **Ingest SHL data** from `data/shl_catalog.json`.
+2. **Compute embeddings** for catalog entries using Hugging Face.
+3. **Persist vectors** into ChromaDB (`data/chroma_db/`).
+4. **Accept chat requests** via `POST /chat`.
+5. **Retrieve relevant assessments** using similarity search.
+6. **Compose prompts** for Groq-based reasoning.
+7. **Return curated recommendations** with full details.
+
+---
+
+## 💻 Setup & Local Run
+
+```powershell
 python -m venv .venv
 .venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Copy environment template
 copy .env.example .env
 ```
 
-### 2. Configure Environment Variables
+Edit `.env` and set:
 
-Edit `.env` and add:
-- **`GROQ_API_KEY`**: Your Groq API key (get from https://console.groq.com)
-- **`HF_TOKEN`**: Hugging Face token (get from https://huggingface.co/settings/tokens)
-- **`HF_EMBED_BACKEND`**: 
-  - `api` — use Hugging Face Inference API (requires internet, best for testing)
-  - `local` — use sentence-transformers locally (recommended for production)
-- **`API_BASE_URL`**: (optional) Deployed API URL for Streamlit to connect to
+- `GROQ_API_KEY`
+- `HF_TOKEN`
+- `HF_EMBED_BACKEND` = `api` or `local`
+- `API_BASE_URL` when using a deployed backend
 
-**Security Note**: Keep `.env` out of version control. `.env.example` is a template only—never commit real keys.
+Build the vector database:
 
-### 3. Build Vector Database
-
-```bash
+```powershell
 python scripts/ingest.py
 ```
 
-This ingests the SHL catalog from `data/shl_catalog.json` into ChromaDB with embeddings.
+Run the backend:
 
-### 4. Run Locally (Two Options)
-
-**Option A: Run both services locally**
-
-Terminal 1 (API):
-```bash
+```powershell
 uvicorn app.main:app --reload --port 8000
 ```
 
-Terminal 2 (UI):
-```bash
+Run the Streamlit UI:
+
+```powershell
 streamlit run streamlit_app.py
 ```
 
-Then open http://localhost:8501 in your browser.
+Open the app at `http://localhost:8501`
 
-**Option B: Use deployed API + local UI**
+---
 
-Set `API_BASE_URL` in `.env` to your deployed backend URL, then run only Streamlit.
-
-## API Endpoints
+## 🔧 API Endpoints
 
 ### `GET /`
-Returns API metadata and documentation links.
 
-```bash
-curl http://localhost:8000/
-```
+Returns API metadata and docs links.
 
 ### `GET /health`
-Health check endpoint.
 
-```bash
-curl http://localhost:8000/health
-```
+Health check response:
 
-Response:
 ```json
 { "status": "ok" }
 ```
 
 ### `POST /chat`
-Main conversation endpoint. Returns AI reply and assessment recommendations.
 
-**Request:**
+Request example:
+
 ```bash
 curl -X POST http://localhost:8000/chat \
   -H "Content-Type: application/json" \
@@ -134,7 +148,8 @@ curl -X POST http://localhost:8000/chat \
   }'
 ```
 
-**Response:**
+Response example:
+
 ```json
 {
   "reply": "Based on your requirements, I recommend the following SHL assessments...",
@@ -153,64 +168,65 @@ curl -X POST http://localhost:8000/chat \
 }
 ```
 
-## Agent Behavior
+---
 
-The assistant demonstrates intelligent multi-turn conversation handling:
+## ✨ Agent Behavior
 
-- **Clarification**: Asks for missing context (role, seniority, focus areas)
-- **Recommendation**: Suggests relevant SHL assessments with full details
-- **Refinement**: Adjusts suggestions based on conversation history
-- **Comparison**: Provides side-by-side assessment comparisons when requested
-- **Domain Guardrails**: Politely declines non-SHL topics
-- **Stateless Design**: All context comes from message history—no server-side session storage
+This solution is designed for intelligent recommendation workflows:
 
-## Technology Stack
+- **Clarification** on missing details such as seniority or focus area
+- **Recommendation** of best-fit SHL assessments
+- **Refinement** based on updated user context
+- **Comparison** of comparable tests on request
+- **Domain safety** that refuses out-of-scope requests
+- **Stateless design** using only message history
+
+---
+
+## 📦 Technology Stack
 
 - **Backend**: FastAPI + Uvicorn
 - **Frontend**: Streamlit
-- **LLM**: Groq (API inference)
-- **Vector DB**: ChromaDB + Hugging Face embeddings
-- **RAG Framework**: LangChain
-- **Data Processing**: Beautiful Soup, Pydantic, NumPy
+- **Vector DB**: ChromaDB
+- **Embeddings**: Hugging Face or local `sentence-transformers`
+- **LLM**: Groq API
+- **RAG**: LangChain
+- **Data tools**: BeautifulSoup, Pydantic, NumPy
 
-## Deployment
+---
 
-### Production Setup (Render)
+## 🛠️ Deployment
 
-1. Push code to GitHub (`.env` excluded)
-2. Create Render Web Service pointing to your GitHub repo
-3. Set environment variables in Render dashboard (GROQ_API_KEY, HF_TOKEN, etc.)
-4. Deploy backend on Render (https://your-app.onrender.com)
-5. Update Streamlit with `API_BASE_URL=https://your-app.onrender.com`
-6. Optionally deploy Streamlit frontend on Streamlit Cloud
+Deployed frontend link:
 
-### Local Development
+https://dhruv0126-assessment-recommender-dhruv0126.streamlit.app/
 
-```bash
-# Watch for code changes and auto-reload
-uvicorn app.main:app --reload
+### Render / cloud deployment notes
 
-# Or with a specific host/port
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
+- Push code to GitHub (exclude `.env`)
+- Configure environment secrets in Render
+- Deploy backend service
+- Point Streamlit or frontend to `API_BASE_URL`
 
-## Troubleshooting
+---
 
-**Embeddings API errors**: Switch from `HF_EMBED_BACKEND=api` to `HF_EMBED_BACKEND=local` in `.env`
+## 🧪 Troubleshooting
 
-**Vector DB missing**: Run `python scripts/ingest.py` to build ChromaDB
+- If embeddings fail: switch `HF_EMBED_BACKEND=local`
+- If the vector DB is missing: run `python scripts/ingest.py`
+- If API calls timeout: increase `REQUEST_TIMEOUT_SECONDS` in `streamlit_app.py`
 
-**API timeout**: Increase `REQUEST_TIMEOUT_SECONDS` in `streamlit_app.py`
+---
 
-## Contributing
+## 📈 How to extend
 
-To extend the assistant:
+- Add new assessments to `data/shl_catalog.json`
+- Re-run `python scripts/ingest.py`
+- Adjust `app/prompts/system_prompt.py` for behavior changes
+- Add new retrieval or recommendation logic in `app/services/`
 
-1. Update `data/shl_catalog.json` with new assessments
-2. Re-run `python scripts/ingest.py`
-3. Modify `app/prompts/system_prompt.py` for different behavior
-4. Add new services in `app/services/` for custom logic
+---
 
-## License
+## 📝 Notes
 
-Internal project. See project documentation for guidelines.
+This repo is built for internal use and can be extended into a stronger talent assessment recommendation engine with better evaluation metrics, richer UI flows, and stronger production monitoring.
