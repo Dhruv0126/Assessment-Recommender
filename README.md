@@ -1,6 +1,9 @@
 # SHL Assessment Recommendation Assistant
 
-![SHL Recommendation Assistant](Images/Screenshot 2026-06-07 184359.png)
+<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+  <img src="Images/Screenshot%202026-06-07%20184359.png" alt="SHL Recommendation Assistant - Screenshot 1" style="width:48%;max-width:560px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12)" />
+  <img src="Images/Screenshot%202026-06-07%20184030.png" alt="SHL Recommendation Assistant - Screenshot 2" style="width:48%;max-width:560px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12)" />
+</div>
 
 A modern AI-powered recommendation assistant that helps HR and talent teams find the right SHL assessment using conversational inputs, semantic search, and smart prompt orchestration.
 
